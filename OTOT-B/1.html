@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>
+      <style>
+         body { font-family: Arial; }
+      </style>
+   </head>
+   <body>
+      <svg id="demo1" width="3000" height="3000"></svg>
+      <script language = "javascript">
+         d3.select("#demo1")
+         .append("g")
+         .attr("transform", "translate(700, 850)");
+         d3.select("#demo1 g").append("text")
+            .text("Shanghai")
+            .attr("x", -600)
+            .attr("y", -750)
+            .attr("text-anchor", "middle");
+         // Data annual range：1999 - 2022
+         var incomeOfSh = [10972, 11781, 12976, 13367, 15026, 16891, 18912, 21001, 24048, 27204, 29461, 32584, 37079, 41130, 44878, 48841, 52962, 57692, 62596, 68034, 71615, 74437, 76429, 79610];
+         var priceOfSh = [2924, 3326, 3500, 4700, 5118, 6385, 7414, 7938, 9755, 7800, 13487, 17433, 19872, 20341, 24129, 27214, 31479, 38749, 43716, 53186, 54187, 61747, 64719, 67334];
+         var colors = ["pink", "rgb(6,154,222)", "rgb(6,191,133)"];
+         for (i = 0; i < 48; i = i + 2) {
+            var len1 = priceOfSh[i / 2] / 100, len2 = incomeOfSh[i / 2] / 100, len3 = len2 - len1;
+            var arcGenOfPrice = d3.arc()
+               .innerRadius(len1 < len3 ? 0 : len3)
+               .outerRadius(len1 < len3 ? len3 : len1)
+               .startAngle(i * Math.PI / 24)
+               .endAngle((i + 2) * Math.PI / 24);
+            var arcGenOfIncome = d3.arc()
+               .innerRadius(len1 < len3 ? len3 : len1)
+               .outerRadius(len2)
+               .startAngle(i * Math.PI / 24)
+               .endAngle((i + 2) * Math.PI / 24);
+            var arcGenOfDiff = d3.arc()
+               .innerRadius(len3 < len1 ? 0 : len1)
+               .outerRadius(len3 < len1 ? len1 : len3)
+               .startAngle(i * Math.PI / 24)
+               .endAngle((i + 2) * Math.PI / 24);
+            if (len1 < len3) {
+               d3.select("#demo1 g")
+                  .append("path")
+                  .attr("d", arcGenOfPrice)
+                  .attr("fill", colors[0])
+                  .attr("stroke", "gray")
+                  .attr("stroke-width", 1);
+               d3.select("#demo1 g")
+                  .append("path")
+                  .attr("d", arcGenOfDiff)
+                  .attr("fill", colors[2])
+                  .attr("stroke", "gray")
+                  .attr("stroke-width", 1);
+            } else {
+               d3.select("#demo1 g")
+                  .append("path")
+                  .attr("d", arcGenOfDiff)
+                  .attr("fill", colors[2])
+                  .attr("stroke", "gray")
+                  .attr("stroke-width", 1);
+               d3.select("#demo1 g")
+                  .append("path")
+                  .attr("d", arcGenOfPrice)
+                  .attr("fill", colors[0])
+                  .attr("stroke", "gray")
+                  .attr("stroke-width", 1);
+            }
+            d3.select("#demo1 g")
+               .append("path")
+               .attr("d", arcGenOfIncome)
+               .attr("fill", colors[1])
+               .attr("stroke", "gray")
+               .attr("stroke-width", 1);
+            d3.select("#demo1 g").append("text")
+               .text(i / 2 + 1999)
+               .attr("x", -(len2 + 20) * Math.cos((i + 1) * Math.PI / 24 + Math.PI / 2))
+               .attr("y", -(len2 + 20) * Math.sin((i + 1) * Math.PI / 24 + Math.PI / 2))
+               .attr("text-anchor", "middle");
+         }
+      </script>
+   </body>
+</html>
+

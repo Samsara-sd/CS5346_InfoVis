@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script> 
+      <script type = "text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>
+
+      <style>
+         body { font-family: Arial; }
+      </style>
+   </head>
+   <body>
+      <svg id="demo1" width="400" height="400"></svg>
+      <script language = "javascript">
+         var width = 400;
+         var height = 400;
+         var radius = Math.min(width, height) / 2;
+
+         var color = d3.scaleOrdinal()
+         .range(["#98abc5", "#8a89a6", "#7b6888"]);
+
+         var svg = d3.select("body")
+         .append("svg")
+         .attr("width", width)
+         .attr("height", height);
+
+         var g = svg.append("g")
+         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+         var arc = d3.arc()
+         .innerRadius(0)
+         .outerRadius(radius);
+
+         var pie = d3.pie()
+         .sort(null)
+         .value(function(d) { return d.value; });
+
+         var data = [
+         {label: "A", value: 20},
+         {label: "B", value: 30},
+         {label: "C", value: 50}
+         ];
+
+         var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([0, 0])
+            .html(function(d) {
+               return "<strong>" + d.data.label + ":</strong> <span>" + d.data.value + "</span>";
+            })
+            .direction(function(d) {
+               var centroid = getCentroid(d);
+               if (centroid[0] < width / 2) {
+                  return 'w';
+               } else {
+                  return 'e';
+               }
+         });
+
+         tip.show = function(d) {
+            var centroid = getCentroid(d);
+            d3.select(this)
+               .transition()
+               .duration(200)
+               .style("opacity", 1)
+               .style("pointer-events", "all")
+               .style("left", centroid[0] + "px")
+               .style("top", centroid[1] + "px");
+         };
+
+         var path = g.selectAll("path")
+            .data(pie(data))
+            .enter().append("path")
+            .attr("d", arc)
+            .attr("fill", function(d) { return color(d.data.label); })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
+
+         g.call(tip);
+
+      </script>
+   </body>
+</html>
+
